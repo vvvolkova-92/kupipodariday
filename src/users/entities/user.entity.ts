@@ -8,6 +8,7 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
+import {Wish} from "../../wishes/entities/wish.entity";
 //ОБРАТИТЕ ВНИМАНИЕ, ЧТО В СВАГЕРЕ И ЧЕК-ЛИСТЕ РАЗНЫЕ МИН И МАКС
 @Entity()
 // класс пользователя наследует базовый класс с общими значениями
@@ -55,11 +56,11 @@ export class User extends BaseClass {
   @IsString()
   password: string;
   // список желаемых подарков 1 ко многим
-  // @OneToMany()
-  // wishes: Wish[];
-  // список подарков, на которые юзер уже скидывается 1 ко многим
+  @OneToMany(() => Wish, (wish) => wish.owner)
+  wishes: Wish[];
+  // TODO список подарков, на которые юзер уже скидывается 1 ко многим
   // @OneToMany()
   // offers: Offer[];
-  // список вишлистов  1 ко многим
+  // TODO список вишлистов  1 ко многим
   // @OneToMany()
 }
