@@ -3,6 +3,7 @@ import { BaseClass } from '../../base/base-class';
 import {IsInt, IsNotEmpty, IsNumber, IsPositive, IsString, IsUrl, Length, MaxLength, MinLength} from 'class-validator';
 import {User} from "../../users/entities/user.entity";
 import {Offer} from "../../offers/entities/offer.entity";
+import {Wishlist} from "../../wishlists/entities/wishlist.entity";
 
 @Entity()
 export class Wish extends BaseClass {
@@ -65,4 +66,7 @@ export class Wish extends BaseClass {
   // массив ссылок на заявки скинуться от других пользователей
   @ManyToOne(() => Offer, (offer) => offer.item)
   offers: Offer[];
+  // связь для списка подарков
+  @ManyToOne(() => Wishlist, (wishList) => wishList.items)
+  wishlist: Wishlist;
 }
