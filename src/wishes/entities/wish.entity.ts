@@ -2,6 +2,7 @@ import {Column, Entity, ManyToOne} from 'typeorm';
 import { BaseClass } from '../../base/base-class';
 import {IsInt, IsNotEmpty, IsNumber, IsPositive, IsString, IsUrl, Length, MaxLength, MinLength} from 'class-validator';
 import {User} from "../../users/entities/user.entity";
+import {Offer} from "../../offers/entities/offer.entity";
 
 @Entity()
 export class Wish extends BaseClass {
@@ -61,5 +62,7 @@ export class Wish extends BaseClass {
   // колонка со ссылкой на пользователя, который добавил подарок в желаемые, 1 ко многим
   @ManyToOne(() => User, (owner) => owner.wishes)
   owner: User;
-  // todo массив ссылок на заявки скинуться от других пользователей
+  // массив ссылок на заявки скинуться от других пользователей
+  @ManyToOne(() => Offer, (offer) => offer.item)
+  offers: Offer[];
 }
