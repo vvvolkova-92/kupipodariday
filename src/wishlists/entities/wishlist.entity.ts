@@ -1,10 +1,17 @@
-import {Column, Entity, ManyToOne, OneToMany} from "typeorm";
-import {BaseClass} from "../../base/base-class";
-import {IsNotEmpty, IsString, IsUrl, Length, MaxLength, MinLength} from "class-validator";
-import {Wish} from "../../wishes/entities/wish.entity";
+import { Column, Entity, ManyToOne, OneToMany } from 'typeorm';
+import { BaseClass } from '../../base/base-class';
+import {
+  IsNotEmpty,
+  IsString,
+  IsUrl,
+  Length,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
+import { Wish } from '../../wishes/entities/wish.entity';
 
 @Entity()
-export class Wishlist extends BaseClass{
+export class Wishlist extends BaseClass {
   // колонка name Wishlist
   @Column()
   @IsNotEmpty()

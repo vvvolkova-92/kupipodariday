@@ -8,8 +8,8 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
-import {Wish} from "../../wishes/entities/wish.entity";
-import {Offer} from "../../offers/entities/offer.entity";
+import { Wish } from '../../wishes/entities/wish.entity';
+import { Offer } from '../../offers/entities/offer.entity';
 //ОБРАТИТЕ ВНИМАНИЕ, ЧТО В СВАГЕРЕ И ЧЕК-ЛИСТЕ РАЗНЫЕ МИН И МАКС
 @Entity()
 // класс пользователя наследует базовый класс с общими значениями
