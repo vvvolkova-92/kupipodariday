@@ -5,8 +5,9 @@ import {
   Body,
   Patch,
   Param,
-  Delete, Req
-} from "@nestjs/common";
+  Delete,
+  Req,
+} from '@nestjs/common';
 import { WishesService } from './wishes.service';
 import { CreateWishDto } from './dto/create-wish.dto';
 import { UpdateWishDto } from './dto/update-wish.dto';

@@ -52,7 +52,7 @@ export class UsersController {
     @Param('username') username: string,
   ): Promise<Wish[]> {
     const { id } = await this.usersService.findByUsername(username);
-    const wishes = await this.usersService.findUserWishes(id)
+    const wishes = await this.usersService.findUserWishes(id);
     return wishes;
   }
 

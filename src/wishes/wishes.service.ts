@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { CreateWishDto } from './dto/create-wish.dto';
 import { UpdateWishDto } from './dto/update-wish.dto';
-import { Repository } from "typeorm";
-import { Wish } from "./entities/wish.entity";
-import { InjectRepository } from "@nestjs/typeorm";
-import { User } from "../users/entities/user.entity";
+import { Repository } from 'typeorm';
+import { Wish } from './entities/wish.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class WishesService {
