@@ -5,12 +5,16 @@ import {
   Body,
   Patch,
   Param,
-  Delete, Req
-} from "@nestjs/common";
+  Delete,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { WishlistsService } from './wishlists.service';
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
 import { UpdateWishlistDto } from './dto/update-wishlist.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('wishlists')
 export class WishlistsController {
   constructor(private readonly wishlistsService: WishlistsService) {}
@@ -41,6 +45,6 @@ export class WishlistsController {
   // 4. DELETE /wishlists/:id - удалить вишлист по id
   @Delete(':id')
   async remove(@Req() req, @Param('id') id: string) {
-    return await this.wishlistsService.remove(req.user, +id);
+    return await this.wishlistsService.remove(+req.user.id, +id);
   }
 }

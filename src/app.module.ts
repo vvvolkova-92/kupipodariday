@@ -10,7 +10,6 @@ import { User } from './users/entities/user.entity';
 import { Offer } from './offers/entities/offer.entity';
 import { Wishlist } from './wishlists/entities/wishlist.entity';
 import { Wish } from './wishes/entities/wish.entity';
-import { AuthService } from './auth/auth.service';
 import { AuthModule } from './auth/auth.module';
 @Module({
   imports: [
@@ -31,6 +30,6 @@ import { AuthModule } from './auth/auth.module';
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService, AuthService],
+  providers: [AppService],
 })
 export class AppModule {}

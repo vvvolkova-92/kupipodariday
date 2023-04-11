@@ -1,11 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateOfferDto } from './dto/create-offer.dto';
-import { User } from "../users/entities/user.entity";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { Offer } from "./entities/offer.entity";
-import { Wish } from "../wishes/entities/wish.entity";
-import { WishesService } from "../wishes/wishes.service";
+import { User } from '../users/entities/user.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Offer } from './entities/offer.entity';
+import { WishesService } from '../wishes/wishes.service';
 
 @Injectable()
 export class OffersService {
@@ -17,12 +20,22 @@ export class OffersService {
   async create(user: User, createOfferDto: CreateOfferDto) {
     const wishId = createOfferDto.item;
     const wish = await this.wishesService.findById(wishId);
-    //TODO считать сумму
-    //TODO запрет скидывать самому себе
-    // if(user.id === wish.owner.id)
-    await this.wishesService.update(wish.id, {
-      raised: +wish.raised + +createOfferDto.amount,
-    });
+    if (!wish) {
+      throw new NotFoundException('Подарок не найден');
+    }
+    if (user.id === wish.owner.id)
+      throw new ForbiddenException(
+        'Вы сами добавили это предложение и скидываться на него вы не можете',
+      );
+    const sum = +wish.raised + +createOfferDto.amount;
+    if (sum > +wish.price) throw new ForbiddenException('Сумма слишком велика');
+    await this.wishesService.update(
+      wish.id,
+      {
+        raised: sum,
+      },
+      user.id,
+    );
     await this.offerRepository.save({
       ...createOfferDto,
       user,
@@ -36,9 +49,5 @@ export class OffersService {
 
   async findById(id: number) {
     return await this.offerRepository.findOneBy({ id });
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} offer`;
   }
 }

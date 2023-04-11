@@ -1,11 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
 import { UpdateWishlistDto } from './dto/update-wishlist.dto';
-import { Wishlist } from "./entities/wishlist.entity";
-import { In, Repository } from "typeorm";
-import { WishesService } from "../wishes/wishes.service";
-import { InjectRepository } from "@nestjs/typeorm";
-import { User } from "../users/entities/user.entity";
+import { Wishlist } from './entities/wishlist.entity';
+import { In, Repository } from 'typeorm';
+import { WishesService } from '../wishes/wishes.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class WishlistsService {
@@ -36,6 +40,13 @@ export class WishlistsService {
   async update(user: User, id: number, updateWishlistDto: UpdateWishlistDto) {
     // текущий вишлист
     const list = await this.findById(id);
+    if (!list) {
+      throw new NotFoundException('Вишлист не найден');
+    }
+    if (list.owner.id !== user.id)
+      throw new ForbiddenException(
+        'Нет доступа для редактирования этой записи',
+      );
     const wishes = await this.wishesService.findWishList({
       where: { id: In(updateWishlistDto.items) },
     });
@@ -51,7 +62,12 @@ export class WishlistsService {
 
   async remove(userId: number, id: number) {
     const list = await this.findById(id);
-    //TODO написать обработку ошибок
+    if (!list) {
+      throw new NotFoundException('Вишлист не найден');
+    }
+    if (list.owner.id !== userId)
+      throw new ForbiddenException('Нет доступа для удаления этой записи');
+
     return await this.wishlistsRepository.delete(id);
   }
 }

@@ -4,11 +4,11 @@ import {
   IsNotEmpty,
   IsString,
   IsUrl,
-  Length,
   MaxLength,
   MinLength,
 } from 'class-validator';
 import { Wish } from '../../wishes/entities/wish.entity';
+import { User } from '../../users/entities/user.entity';
 
 @Entity()
 export class Wishlist extends BaseClass {
@@ -39,4 +39,6 @@ export class Wishlist extends BaseClass {
   // колонка (1 ко многим) содержит набор ссылок на подарки
   @OneToMany(() => Wish, (wish) => wish.wishlist)
   items: Wish[];
+  @ManyToOne(() => User, (user) => user.wishlists)
+  owner: User;
 }

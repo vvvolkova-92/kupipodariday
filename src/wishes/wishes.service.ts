@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateWishDto } from './dto/create-wish.dto';
 import { UpdateWishDto } from './dto/update-wish.dto';
 import { Repository } from 'typeorm';
@@ -14,9 +18,8 @@ export class WishesService {
   ) {}
   // создание подарка
   async create(owner: User, createWishDto: CreateWishDto): Promise<Wish> {
-    // кто-то же вещь добавил изначально, значит должен быть владелец?
     const wish = await this.wishRepository.create({ ...createWishDto, owner });
-    return this.wishRepository.save(createWishDto);
+    return this.wishRepository.save(wish);
   }
   // поиск всех
   findAll(): Promise<Wish[]> {
@@ -25,26 +28,39 @@ export class WishesService {
   // поиск по id
   async findById(id: number): Promise<Wish> {
     const wish = await this.wishRepository.findOneBy({ id });
+    if (!wish) {
+      throw new NotFoundException('Подарок не найден');
+    }
     return wish;
-    // TODO выкинуть ошибку, если ничего не нашлось
   }
   // поиск массива значений
   async findWishList(item): Promise<Wish[]> {
     return await this.wishRepository.find(item);
   }
   //
-  async update(id: number, updateWishDto: UpdateWishDto) {
-    // TODO выкинуть ошибки, если нет подарка с таким айди или другая беда =)
-    const wish = await this.wishRepository.update(id, {
+  async update(id: number, updateWishDto: UpdateWishDto, userId: number) {
+    const wish = await this.findById(id);
+    if (!wish) {
+      throw new NotFoundException('Подарок не найден');
+    }
+    if (userId !== wish.owner.id)
+      throw new ForbiddenException(
+        'Нет доступа для редактирования этого подарка',
+      );
+    return await this.wishRepository.update(id, {
       ...updateWishDto,
       updatedAt: new Date(),
     });
   }
 
-  async remove(id: number) {
-    //TODO выкинуть ошибки, если нет подарка с таким айди или другая беда =)
+  async remove(id: number, userId: number) {
     const wish = await this.wishRepository.findOneBy({ id });
-    await this.wishRepository.delete(id);
+    if (!wish) {
+      throw new NotFoundException('Подарок не найден');
+    }
+    if (userId !== wish.owner.id)
+      throw new ForbiddenException('Нет доступа для удаления этого подарка');
+    return await this.wishRepository.delete(id);
   }
   // поиск 40 последних подарков - в свагере непонятно, а в чек-листе стоит число 40
   async lastWishes(): Promise<Wish[]> {
@@ -63,8 +79,13 @@ export class WishesService {
   // скопировать подарок
   async copyWish(id: number, user: User) {
     const wish = await this.findById(id);
+    if (!wish) {
+      throw new NotFoundException('Подарок не найден');
+    }
+    if (user.id === wish.owner.id)
+      throw new ForbiddenException('Нельзя копировать свои подарки');
+
     const { copied } = wish;
-    //TODO обработку ошибок
     //увеличить к-во копий
     await this.wishRepository.update(id, {
       copied: copied + 1,

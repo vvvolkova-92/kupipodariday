@@ -5,24 +5,26 @@ import {
   Body,
   Patch,
   Param,
-  Delete,
   Req,
-  Query,
+  UseGuards,
+  NotFoundException,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { Wish } from '../wishes/entities/wish.entity';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
-  //todo после авторизации удалить создание юзера
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
-  }
+
+  // @Post()
+  // create(@Body() createUserDto: CreateUserDto) {
+  //   return this.usersService.create(createUserDto);
+  // }
+
   // 1. GET users/me - просмотр своего профиля
   @Get('me')
   async findMe(@Req() req): Promise<User> {
@@ -51,6 +53,7 @@ export class UsersController {
     @Param('username') username: string,
   ): Promise<Wish[]> {
     const { id } = await this.usersService.findByUsername(username);
+    if (!id) throw new NotFoundException('Пользователь не найден');
     const wishes = await this.usersService.findUserWishes(id);
     return wishes;
   }
@@ -59,6 +62,7 @@ export class UsersController {
   @Post('find')
   async findByEmail(@Body() query: string): Promise<User[]> {
     const user = await this.usersService.findByEmail(query);
+    if (!user) throw new NotFoundException('Пользователь не найден');
     return user;
   }
   @Get(':id')
@@ -71,8 +75,8 @@ export class UsersController {
     return this.usersService.update(+id, updateUserDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
-  }
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {
+  //   return this.usersService.remove(+id);
+  // }
 }

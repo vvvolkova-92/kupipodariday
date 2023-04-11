@@ -1,4 +1,4 @@
-import { IsArray, isString, IsString, IsUrl, Length, MaxLength } from "class-validator";
+import { IsArray, IsString, IsUrl, Length, MaxLength } from 'class-validator';
 
 export class CreateWishlistDto {
   @Length(1, 250)

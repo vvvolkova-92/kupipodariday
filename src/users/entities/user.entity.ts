@@ -10,6 +10,7 @@ import {
 } from 'class-validator';
 import { Wish } from '../../wishes/entities/wish.entity';
 import { Offer } from '../../offers/entities/offer.entity';
+import { Wishlist } from '../../wishlists/entities/wishlist.entity';
 //ОБРАТИТЕ ВНИМАНИЕ, ЧТО В СВАГЕРЕ И ЧЕК-ЛИСТЕ РАЗНЫЕ МИН И МАКС
 @Entity()
 // класс пользователя наследует базовый класс с общими значениями
@@ -62,6 +63,6 @@ export class User extends BaseClass {
   // список подарков, на которые юзер уже скидывается 1 ко многим
   @OneToMany(() => Offer, (offer) => offer.user)
   offers: Offer[];
-  // TODO список вишлистов  1 ко многим
-  // @OneToMany()
+  @OneToMany(() => Wishlist, (wishlist) => wishlist.owner)
+  wishlists: Wishlist[];
 }

@@ -3,14 +3,16 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
-  Delete,
   Req,
-} from "@nestjs/common";
+  UseGuards,
+  NotFoundException,
+} from '@nestjs/common';
 import { OffersService } from './offers.service';
 import { CreateOfferDto } from './dto/create-offer.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
+@UseGuards(JwtAuthGuard)
 @Controller('offers')
 export class OffersController {
   constructor(private readonly offersService: OffersService) {}
@@ -22,11 +24,16 @@ export class OffersController {
   // 2. GET /offers получить все предложения
   @Get()
   async findAll() {
-    return await this.offersService.findAll();
+    const offers = await this.offersService.findAll();
+    if (!offers) throw new NotFoundException('Предложения не найдены');
+    return offers;
   }
   // 3. GET /offers/:id получить предложение по id
   @Get(':id')
   async findById(@Param('id') id: string) {
-    return await this.offersService.findById(+id);
+    const offer = await this.offersService.findById(+id);
+    if (!offer)
+      throw new NotFoundException(`Предложение с id ${id} не найдено`);
+    return offer;
   }
 }
