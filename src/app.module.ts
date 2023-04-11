@@ -10,7 +10,8 @@ import { User } from './users/entities/user.entity';
 import { Offer } from './offers/entities/offer.entity';
 import { Wishlist } from './wishlists/entities/wishlist.entity';
 import { Wish } from './wishes/entities/wish.entity';
-
+import { AuthService } from './auth/auth.service';
+import { AuthModule } from './auth/auth.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -27,8 +28,9 @@ import { Wish } from './wishes/entities/wish.entity';
     WishesModule,
     WishlistsModule,
     OffersModule,
+    AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, AuthService],
 })
 export class AppModule {}
