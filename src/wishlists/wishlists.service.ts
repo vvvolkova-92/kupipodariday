@@ -6,13 +6,14 @@ import {
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
 import { UpdateWishlistDto } from './dto/update-wishlist.dto';
 import { Wishlist } from './entities/wishlist.entity';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { WishesService } from '../wishes/wishes.service';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class WishlistsService {
+  private createWishlistDto: any;
   constructor(
     @InjectRepository(Wishlist)
     private readonly wishlistsRepository: Repository<Wishlist>,
@@ -48,7 +49,7 @@ export class WishlistsService {
         'Нет доступа для редактирования этой записи',
       );
     const wishes = await this.wishesService.findWishList(
-      createWishlistDto.itemsId,
+      updateWishlistDto.itemsId,
     );
     const { name, image, description } = updateWishlistDto;
     return await this.wishlistsRepository.save({
