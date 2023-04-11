@@ -25,10 +25,15 @@ export class UsersService {
   async findBy(id: number): Promise<User> {
     const user = await this.userRepository.findOneBy({ id });
     return user;
+    //TODO выкинуть ошибку, если ничего не нашлось
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
-    const user = await this.userRepository.update(id, updateUserDto);
+    //TODO выкинуть ошибки, если нет юзера с таким айди или другая беда =)
+    const user = await this.userRepository.update(id, {
+      ...updateUserDto,
+      updatedAt: new Date(),
+    });
     return user;
   }
 
