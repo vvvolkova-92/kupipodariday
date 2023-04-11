@@ -47,9 +47,9 @@ export class WishlistsService {
       throw new ForbiddenException(
         'Нет доступа для редактирования этой записи',
       );
-    const wishes = await this.wishesService.findWishList({
-      where: { id: In(updateWishlistDto.itemsId) },
-    });
+    const wishes = await this.wishesService.findWishList(
+      createWishlistDto.itemsId,
+    );
     const { name, image, description } = updateWishlistDto;
     return await this.wishlistsRepository.save({
       ...list,
