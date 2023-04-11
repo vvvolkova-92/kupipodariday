@@ -28,6 +28,10 @@ export class WishesService {
     return wish;
     // TODO выкинуть ошибку, если ничего не нашлось
   }
+  // поиск массива значений
+  async findWishList(item): Promise<Wish[]> {
+    return await this.wishRepository.find(item);
+  }
   //
   async update(id: number, updateWishDto: UpdateWishDto) {
     // TODO выкинуть ошибки, если нет подарка с таким айди или другая беда =)

@@ -1,26 +1,57 @@
 import { Injectable } from '@nestjs/common';
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
 import { UpdateWishlistDto } from './dto/update-wishlist.dto';
+import { Wishlist } from "./entities/wishlist.entity";
+import { In, Repository } from "typeorm";
+import { WishesService } from "../wishes/wishes.service";
+import { InjectRepository } from "@nestjs/typeorm";
+import { User } from "../users/entities/user.entity";
 
 @Injectable()
 export class WishlistsService {
-  create(createWishlistDto: CreateWishlistDto) {
-    return 'This action adds a new wishlist';
+  constructor(
+    @InjectRepository(Wishlist)
+    private readonly wishlistsRepository: Repository<Wishlist>,
+    private readonly wishesService: WishesService,
+  ) {}
+  async create(user: User, createWishlistDto: CreateWishlistDto) {
+    const wishes = await this.wishesService.findWishList({
+      where: { id: In(createWishlistDto.items) },
+    });
+    return await this.wishlistsRepository.save({
+      ...createWishlistDto,
+      owner: user,
+      items: wishes,
+    });
   }
 
-  findAll() {
-    return `This action returns all wishlists`;
+  async findAll() {
+    return await this.wishlistsRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} wishlist`;
+  async findById(id: number) {
+    return await this.wishlistsRepository.findOneBy({ id });
   }
 
-  update(id: number, updateWishlistDto: UpdateWishlistDto) {
-    return `This action updates a #${id} wishlist`;
+  async update(user: User, id: number, updateWishlistDto: UpdateWishlistDto) {
+    // текущий вишлист
+    const list = await this.findById(id);
+    const wishes = await this.wishesService.findWishList({
+      where: { id: In(updateWishlistDto.items) },
+    });
+    const { name, image, description } = updateWishlistDto;
+    return await this.wishlistsRepository.save({
+      ...list,
+      name,
+      image,
+      description,
+      items: wishes,
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} wishlist`;
+  async remove(userId: number, id: number) {
+    const list = await this.findById(id);
+    //TODO написать обработку ошибок
+    return await this.wishlistsRepository.delete(id);
   }
 }

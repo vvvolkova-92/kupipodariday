@@ -5,8 +5,8 @@ import {
   Body,
   Patch,
   Param,
-  Delete,
-} from '@nestjs/common';
+  Delete, Req
+} from "@nestjs/common";
 import { WishlistsService } from './wishlists.service';
 import { CreateWishlistDto } from './dto/create-wishlist.dto';
 import { UpdateWishlistDto } from './dto/update-wishlist.dto';
@@ -14,32 +14,33 @@ import { UpdateWishlistDto } from './dto/update-wishlist.dto';
 @Controller('wishlists')
 export class WishlistsController {
   constructor(private readonly wishlistsService: WishlistsService) {}
-
+  // 2. POST /wishlists - создать новый вишлист
   @Post()
-  create(@Body() createWishlistDto: CreateWishlistDto) {
-    return this.wishlistsService.create(createWishlistDto);
+  async create(@Req() req, @Body() createWishlistDto: CreateWishlistDto) {
+    return await this.wishlistsService.create(req.user, createWishlistDto);
   }
-
+  // 1. GET /wishlists - получить все вишлисты
   @Get()
-  findAll() {
+  async findAll() {
     return this.wishlistsService.findAll();
   }
-
+  // 3. GET /wishlists/:id - получить вишлист по id
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.wishlistsService.findOne(+id);
+  async findById(@Param('id') id: string) {
+    return this.wishlistsService.findById(+id);
   }
-
+  // 4. PATCH /wishlists/:id - изменить вишлист по id
   @Patch(':id')
-  update(
+  async update(
+    @Req() req,
     @Param('id') id: string,
     @Body() updateWishlistDto: UpdateWishlistDto,
   ) {
-    return this.wishlistsService.update(+id, updateWishlistDto);
+    return await this.wishlistsService.update(req.user, +id, updateWishlistDto);
   }
-
+  // 4. DELETE /wishlists/:id - удалить вишлист по id
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.wishlistsService.remove(+id);
+  async remove(@Req() req, @Param('id') id: string) {
+    return await this.wishlistsService.remove(req.user, +id);
   }
 }
