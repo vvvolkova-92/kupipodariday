@@ -9,7 +9,7 @@ export class CreateWishlistDto {
   image?: string;
 
   @IsArray()
-  items?: number[];
+  itemsId?: number[];
 
   @MaxLength(1500)
   @IsString()

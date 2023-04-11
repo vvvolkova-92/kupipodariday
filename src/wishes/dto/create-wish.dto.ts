@@ -1,5 +1,4 @@
 import {
-  IsInt,
   IsNotEmpty,
   IsNumber,
   IsPositive,
@@ -32,9 +31,6 @@ export class CreateWishDto {
     maxDecimalPlaces: 2,
   })
   raised: number;
-
-  @IsInt()
-  copied: number;
 
   @IsString()
   @IsNotEmpty()

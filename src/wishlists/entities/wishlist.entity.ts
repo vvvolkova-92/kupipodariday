@@ -25,7 +25,7 @@ export class Wishlist extends BaseClass {
   name: string;
 
   // колонка description
-  @Column()
+  @Column({ nullable: true })
   @IsString()
   @MaxLength(1500, {
     message: 'Описание слишком длинное, максимум 1500 символов',
@@ -38,7 +38,7 @@ export class Wishlist extends BaseClass {
   image: string;
   // колонка (1 ко многим) содержит набор ссылок на подарки
   @OneToMany(() => Wish, (wish) => wish.wishlist)
-  items: Wish[];
+  itemsId: Wish[];
   @ManyToOne(() => User, (user) => user.wishlists)
   owner: User;
 }

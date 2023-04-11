@@ -17,6 +17,16 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 @Controller('wishes')
 export class WishesController {
   constructor(private readonly wishesService: WishesService) {}
+  // 5. GET /wishes/last - в свагере непонятно, а в чек-листе 40 последних подарков
+  @Get('last')
+  async findLastWishes() {
+    return await this.wishesService.lastWishes();
+  }
+  // 6. GET /wishes/top - в свагере непонятно, а в чек-листе 10 топ подарков
+  @Get('top')
+  async findTopWishes() {
+    return await this.wishesService.topWishes();
+  }
   // 1. POST /wishes - новый желаемый подарок
   @UseGuards(JwtAuthGuard)
   @Post()
@@ -45,16 +55,6 @@ export class WishesController {
   @Delete(':id')
   async remove(@Req() req, @Param('id') id: string) {
     return await this.wishesService.remove(+id, +req.user.id);
-  }
-  // 5. GET /wishes/last - в свагере непонятно, а в чек-листе 40 последних подарков
-  @Get('last')
-  async findLastWishes() {
-    return await this.wishesService.lastWishes();
-  }
-  // 6. GET /wishes/top - в свагере непонятно, а в чек-листе 10 топ подарков
-  @Get('top')
-  async findTopWishes() {
-    return await this.wishesService.topWishes();
   }
   // 7. POST /wishes/:id/copy - копия подарка
   @UseGuards(JwtAuthGuard)

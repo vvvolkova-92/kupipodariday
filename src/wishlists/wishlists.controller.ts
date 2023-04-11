@@ -15,7 +15,8 @@ import { UpdateWishlistDto } from './dto/update-wishlist.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 @UseGuards(JwtAuthGuard)
-@Controller('wishlists')
+// ха ха, это шутка такая с таким путем????? словила баг на этом
+@Controller('wishlistlists')
 export class WishlistsController {
   constructor(private readonly wishlistsService: WishlistsService) {}
   // 2. POST /wishlists - создать новый вишлист

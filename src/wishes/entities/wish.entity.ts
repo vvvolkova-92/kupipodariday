@@ -1,7 +1,6 @@
 import { Column, Entity, ManyToOne } from 'typeorm';
 import { BaseClass } from '../../base/base-class';
 import {
-  IsInt,
   IsNotEmpty,
   IsNumber,
   IsPositive,
@@ -65,11 +64,10 @@ export class Wish extends BaseClass {
   @IsString()
   @IsNotEmpty()
   @Length(1, 1024)
-  description: string;
+  description?: string;
   // колонка copied
-  @Column()
-  @IsInt()
-  copied: number;
+  @Column({ default: 0 })
+  copied?: number;
   // колонка со ссылкой на пользователя, который добавил подарок в желаемые, 1 ко многим
   @ManyToOne(() => User, (owner) => owner.wishes)
   owner: User;
@@ -77,6 +75,6 @@ export class Wish extends BaseClass {
   @ManyToOne(() => Offer, (offer) => offer.item)
   offers: Offer[];
   // связь для списка подарков
-  @ManyToOne(() => Wishlist, (wishList) => wishList.items)
+  @ManyToOne(() => Wishlist, (wishList) => wishList.itemsId)
   wishlist: Wishlist;
 }

@@ -18,7 +18,7 @@ export class WishesService {
   ) {}
   // создание подарка
   async create(owner: User, createWishDto: CreateWishDto): Promise<Wish> {
-    const wish = await this.wishRepository.create({ ...createWishDto, owner });
+    const wish = this.wishRepository.create({ ...createWishDto, owner });
     return this.wishRepository.save(wish);
   }
   // поиск всех
@@ -35,7 +35,7 @@ export class WishesService {
   }
   // поиск массива значений
   async findWishList(item): Promise<Wish[]> {
-    return await this.wishRepository.find(item);
+    return await this.wishRepository.findBy(item);
   }
   //
   async update(id: number, updateWishDto: UpdateWishDto, userId: number) {
@@ -94,7 +94,6 @@ export class WishesService {
     await this.create(user, {
       ...wish,
       raised: 0,
-      copied: 0,
     });
   }
 }

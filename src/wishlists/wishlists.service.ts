@@ -19,13 +19,13 @@ export class WishlistsService {
     private readonly wishesService: WishesService,
   ) {}
   async create(user: User, createWishlistDto: CreateWishlistDto) {
-    const wishes = await this.wishesService.findWishList({
-      where: { id: In(createWishlistDto.items) },
-    });
+    const wishes = await this.wishesService.findWishList(
+      createWishlistDto.itemsId,
+    );
     return await this.wishlistsRepository.save({
       ...createWishlistDto,
       owner: user,
-      items: wishes,
+      itemsId: wishes,
     });
   }
 
@@ -48,7 +48,7 @@ export class WishlistsService {
         'Нет доступа для редактирования этой записи',
       );
     const wishes = await this.wishesService.findWishList({
-      where: { id: In(updateWishlistDto.items) },
+      where: { id: In(updateWishlistDto.itemsId) },
     });
     const { name, image, description } = updateWishlistDto;
     return await this.wishlistsRepository.save({
@@ -56,7 +56,7 @@ export class WishlistsService {
       name,
       image,
       description,
-      items: wishes,
+      itemsId: wishes,
     });
   }
 
