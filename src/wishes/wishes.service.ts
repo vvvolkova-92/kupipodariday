@@ -26,11 +26,11 @@ export class WishesService {
   async findById(id: number): Promise<Wish> {
     const wish = await this.wishRepository.findOneBy({ id });
     return wish;
-    //TODO выкинуть ошибку, если ничего не нашлось
+    // TODO выкинуть ошибку, если ничего не нашлось
   }
   //
   async update(id: number, updateWishDto: UpdateWishDto) {
-    //TODO выкинуть ошибки, если нет подарка с таким айди или другая беда =)
+    // TODO выкинуть ошибки, если нет подарка с таким айди или другая беда =)
     const wish = await this.wishRepository.update(id, {
       ...updateWishDto,
       updatedAt: new Date(),
@@ -41,5 +41,35 @@ export class WishesService {
     //TODO выкинуть ошибки, если нет подарка с таким айди или другая беда =)
     const wish = await this.wishRepository.findOneBy({ id });
     await this.wishRepository.delete(id);
+  }
+  // поиск 40 последних подарков - в свагере непонятно, а в чек-листе стоит число 40
+  async lastWishes(): Promise<Wish[]> {
+    return await this.wishRepository.find({
+      take: 40,
+      order: { createdAt: 'DESC' },
+    });
+  }
+  // поиск 10 топовых подарков - в свагере непонятно, а в чек-листе стоит число 10
+  async topWishes(): Promise<Wish[]> {
+    return await this.wishRepository.find({
+      take: 10,
+      order: { copied: 'DESC' },
+    });
+  }
+  // скопировать подарок
+  async copyWish(id: number, user: User) {
+    const wish = await this.findById(id);
+    const { copied } = wish;
+    //TODO обработку ошибок
+    //увеличить к-во копий
+    await this.wishRepository.update(id, {
+      copied: copied + 1,
+    });
+    // сделать копию
+    await this.create(user, {
+      ...wish,
+      raised: 0,
+      copied: 0,
+    });
   }
 }
