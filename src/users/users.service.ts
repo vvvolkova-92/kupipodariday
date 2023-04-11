@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from "./entities/user.entity";
-import { InjectRepository } from "@nestjs/typeorm";
-import { DataSource, Repository } from "typeorm";
+import { User } from './entities/user.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DataSource, Repository } from 'typeorm';
+import { Wish } from "../wishes/entities/wish.entity";
 
 @Injectable()
 export class UsersService {
@@ -22,12 +23,29 @@ export class UsersService {
     return this.userRepository.find();
   }
   // поиск пользователя по id
-  async findBy(id: number): Promise<User> {
+  async findById(id: number): Promise<User> {
     const user = await this.userRepository.findOneBy({ id });
     return user;
     //TODO выкинуть ошибку, если ничего не нашлось
   }
-
+  // поиск пользователя по username
+  async findByUsername(username: string): Promise<User> {
+    const user = await this.userRepository.findOneBy({ username });
+    return user;
+    //TODO выкинуть ошибку, если ничего не нашлось
+  }
+  // поиск пользователя по email? не понимаю запроса
+  async findByEmail(query: string): Promise<User[]> {
+    const user = await this.userRepository.find({
+      where: [{ email: query }],
+    });
+    return user;
+    //TODO выкинуть ошибку, если ничего не нашлось
+  }
+  // поиск подарков по пользователю
+  async findUserWishes(id: number): Promise<Wish[]> {
+    //TODO дописать функционал
+  }
   async update(id: number, updateUserDto: UpdateUserDto) {
     //TODO выкинуть ошибки, если нет юзера с таким айди или другая беда =)
     const user = await this.userRepository.update(id, {
@@ -38,7 +56,7 @@ export class UsersService {
   }
 
   async remove(id: number) {
-    const user = await this.findBy(id);
+    const user = await this.findById(id);
     await this.userRepository.delete(id);
   }
 }
