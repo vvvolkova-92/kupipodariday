@@ -11,6 +11,8 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(Wish)
+    private readonly wishRepository: Repository<Wish>,
   ) {}
   // создание пользователя
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -44,7 +46,11 @@ export class UsersService {
   }
   // поиск подарков по пользователю
   async findUserWishes(id: number): Promise<Wish[]> {
-    //TODO дописать функционал
+    const wishes = await this.wishRepository.find({
+      where: { owner: { id } },
+    });
+    //TODO выкинуть ошибки
+    return wishes;
   }
   async update(id: number, updateUserDto: UpdateUserDto) {
     //TODO выкинуть ошибки, если нет юзера с таким айди или другая беда =)
