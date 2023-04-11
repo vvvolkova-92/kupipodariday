@@ -6,37 +6,27 @@ import {
   Patch,
   Param,
   Delete,
-} from '@nestjs/common';
+  Req,
+} from "@nestjs/common";
 import { OffersService } from './offers.service';
 import { CreateOfferDto } from './dto/create-offer.dto';
-import { UpdateOfferDto } from './dto/update-offer.dto';
 
 @Controller('offers')
 export class OffersController {
   constructor(private readonly offersService: OffersService) {}
-
+  // 1. POST /offers СОЗДАТЬ ОФФЕР
   @Post()
-  create(@Body() createOfferDto: CreateOfferDto) {
-    return this.offersService.create(createOfferDto);
+  async create(@Req() req, @Body() createOfferDto: CreateOfferDto) {
+    return await this.offersService.create(req.user, createOfferDto);
   }
-
+  // 2. GET /offers получить все предложения
   @Get()
-  findAll() {
-    return this.offersService.findAll();
+  async findAll() {
+    return await this.offersService.findAll();
   }
-
+  // 3. GET /offers/:id получить предложение по id
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.offersService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateOfferDto: UpdateOfferDto) {
-    return this.offersService.update(+id, updateOfferDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.offersService.remove(+id);
+  async findById(@Param('id') id: string) {
+    return await this.offersService.findById(+id);
   }
 }

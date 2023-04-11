@@ -20,7 +20,7 @@ export class Offer extends BaseClass {
   hidden: boolean;
   // колонка (многие к 1) на юзера, который желает скинуться
   @ManyToOne(() => User, (user) => user.offers)
-  user: string;
+  user: User;
   // колонка (многие к 1) ссылка на товар
   @ManyToOne(() => Wish, (wish) => wish.offers)
   item: Wish;
