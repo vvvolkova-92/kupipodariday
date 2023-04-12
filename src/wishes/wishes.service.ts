@@ -27,7 +27,13 @@ export class WishesService {
   }
   // поиск по id
   async findById(id: number): Promise<Wish> {
-    const wish = await this.wishRepository.findOneBy({ id });
+    const wish = await this.wishRepository.findOne({
+      where: { id },
+      relations: {
+        owner: true,
+        offers: true,
+      },
+    });
     if (!wish) {
       throw new NotFoundException('Подарок не найден');
     }
@@ -47,6 +53,21 @@ export class WishesService {
       throw new ForbiddenException(
         'Нет доступа для редактирования этого подарка',
       );
+    if (updateWishDto.price && wish.raised > 0) {
+      throw new ForbiddenException(
+        'Вы не можете изменять стоимость подарка, если уже есть желающие скинуться',
+      );
+    }
+    if (wish.copied > 0) {
+      let isExist;
+      const isCopied = await this.wishRepository.find({
+        where: { owner: { id: userId } },
+      });
+      isCopied.length > 0 ? (isExist = true) : (isExist = false);
+      if (isExist) {
+        throw new ForbiddenException('Вы уже копировали себе этот подарок');
+      }
+    }
     return await this.wishRepository.update(id, {
       ...updateWishDto,
       updatedAt: new Date(),
@@ -79,6 +100,7 @@ export class WishesService {
   // скопировать подарок
   async copyWish(id: number, user: User) {
     const wish = await this.findById(id);
+    console.dir(wish);
     if (!wish) {
       throw new NotFoundException('Подарок не найден');
     }
